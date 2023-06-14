@@ -16,7 +16,7 @@ Alternatively, you can use the `re2-installer.sh` script located in the `package
 
 ```shell
 git clone https://github.com/Npc-coder/re2shield.git
-cd re2shield
+cd re2shield/installed
 sh re2-installer.sh
 ```
 
