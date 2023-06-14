@@ -68,7 +68,13 @@ The match_handler function is called for each match found, allowing you to proce
 ## Use Case
 One of the key advantages of re2shield is its ability to hide the actual regular expression patterns from users during distribution. By compiling the patterns with re2 and using pattern identifiers, you can distribute your code without exposing the underlying regular expression logic. This provides an additional layer of abstraction and enhances the security of your regular expression patterns.
 
+## Features
+- Hide the complexity of regular expressions
+- Work with pattern identifiers instead of exposing the actual regular expression patterns
+- Compile patterns for efficient matching
+- Find all occurrences of patterns in text
+- Customize the handling of matches using callback functions
+
+
 ## License
 This project is licensed under the BSD 3-Clause License. See the [LICENSE](https://opensource.org/license/bsd-3-clause/) file for details.
-
-
