@@ -1,0 +1,11 @@
+README.md
+setup.py
+re2shield/__init__.py
+re2shield/core.py
+re2shield.egg-info/PKG-INFO
+re2shield.egg-info/SOURCES.txt
+re2shield.egg-info/dependency_links.txt
+re2shield.egg-info/requires.txt
+re2shield.egg-info/top_level.txt
+tests/__init__.py
+tests/test_core.py

@@ -15,7 +15,9 @@ Before installing `re2shield`, make sure that `re2` is installed on your system.
 Alternatively, you can use the `re2-installer.sh` script located in the `package/installed` directory. This script automates the installation process for `re2` and its dependencies. Simply run the script using the following command:
 
 ```shell
-bash package/installed/re2-installer.sh
+git clone https://github.com/Npc-coder/re2shield.git
+cd re2shield
+sh re2-installer.sh
 ```
 
 You can install `re2shield` using pip:
@@ -40,11 +42,11 @@ import re2shield
 if __name__ == "__main__":
     db = re2shield.Database()
 
-    # 파일에서 패턴 불러오기
+    # Load patterns from file
     try:
         db = re2shield.load('patterns.pkl')
     except FileNotFoundError:
-        # 패턴 파일이 없는 경우 패턴 컴파일
+        # If pattern file doesn't exist, compile the patterns
         patterns = [
             (r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', 1, None),
             (r'\b\d{3}[-.\s]??\d{3}[-.\s]??\d{4}\b', 2, None),
@@ -55,7 +57,7 @@ if __name__ == "__main__":
         db.compile(expressions=expressions, ids=ids, flags=flags)
         db.dump('patterns.pkl')
 
-    # 텍스트에서 패턴 찾기
+    # Find patterns in text
     def match_handler(id, from_, to, flags, context):
         print(f"Match found for pattern {id} from {from_} to {to}: {context}")
 
