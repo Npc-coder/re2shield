@@ -12,25 +12,37 @@ class Re2ShieldDatabase:
             for match in matches:
                 callback(id, match.start(), match.end(), None, match.group())
 
+    def count_patterns(self):
+        return len(self.re2_patterns)
+
 class Re2Shield:
     def __init__(self):
         self.db = None
 
-    def compile(self, expressions, ids, flags):
+    def __str__(self):
+        if self.db is not None:
+            return f"Re2Shield Database with {self.db.count_patterns()} patterns."
+        else:
+            return "Re2Shield Database is not compiled."
+
+    def compile(self, expressions, ids, flags, overwrite=False):
         if len(expressions) != len(ids) != len(flags):
             raise ValueError("All parameters should have the same length")
 
-        # 중복된 ID가 있는지 확인
-        if len(ids) != len(set(ids)):
-            raise ValueError("IDs should be unique")
-
         re2_patterns = {}
         raw_patterns = {}
+        if not overwrite and self.db is not None:
+            re2_patterns = self.db.re2_patterns.copy()
+            raw_patterns = self.db.raw_patterns.copy()
+
         for id, expr, flag in zip(ids, expressions, flags):
+            if id in re2_patterns:
+                raise ValueError(f"ID {id} already exists in the database. To overwrite, set overwrite=True.")
             re2_patterns[id] = re2.compile(expr, flag)
             raw_patterns[id] = (expr, flag)
 
         self.db = Re2ShieldDatabase(re2_patterns, raw_patterns)
+
 
     def dump(self, file_path):
         if self.db is not None:
@@ -54,5 +66,3 @@ def load(file_path):
     re2_shield = Re2Shield()
     re2_shield.db = Re2ShieldDatabase(re2_patterns, raw_patterns)
     return re2_shield
-    return db
-

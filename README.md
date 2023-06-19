@@ -31,8 +31,14 @@ cd re2shield
 pip install .
 ```
 
-## Usage
+## Updates
+### Version 0.1.3
+- Added the ability to count the number of patterns in the Re2ShieldDatabase. You can now print the Re2Shield object to see the number of compiled patterns.
+- Added an 'overwrite' option to the compile method in Re2Shield. If 'overwrite' is False (default), new patterns are added to the existing ones. If 'overwrite' is True, new patterns replace the existing ones.
+- Enhanced ID duplication check. Now it checks for ID duplication not only among the new patterns but also between the new patterns and the existing ones in the database. If a duplicate ID is found and 'overwrite' is False, a ValueError is raised.
+Please refer to the [Usage](#usage) section for examples of how to use these new features.
 
+## Usage
 ### Importing the Library
 Here is a simple example demonstrating how to use re2shield:
 
@@ -45,6 +51,7 @@ if __name__ == "__main__":
     # Load patterns from file
     try:
         db = re2shield.load('patterns.pkl')
+        print(db)  # Prints the number of patterns in the database
     except FileNotFoundError:
         # If pattern file doesn't exist, compile the patterns
         patterns = [
@@ -54,7 +61,8 @@ if __name__ == "__main__":
         ]
 
         expressions, ids, flags = zip(*patterns)
-        db.compile(expressions=expressions, ids=ids, flags=flags)
+        db.compile(expressions=expressions, ids=ids, flags=flags, overwrite=False)
+        print(db)  # Prints the number of patterns in the database
         db.dump('patterns.pkl')
 
     # Find patterns in text
@@ -76,7 +84,6 @@ One of the key advantages of re2shield is its ability to hide the actual regular
 - Compile patterns for efficient matching
 - Find all occurrences of patterns in text
 - Customize the handling of matches using callback functions
-
 
 ## License
 This project is licensed under the BSD 3-Clause License. See the [LICENSE](https://opensource.org/license/bsd-3-clause/) file for details.

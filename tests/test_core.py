@@ -5,7 +5,8 @@ if __name__ == "__main__":
 
     # Load patterns from file
     try:
-        db = re2shield.load('patterns.pkl')
+        db = re2shield.load('patterns.db')
+        print(db)  # Prints the number of patterns in the database
     except FileNotFoundError:
         # If pattern file doesn't exist, compile the patterns
         patterns = [
@@ -15,8 +16,9 @@ if __name__ == "__main__":
         ]
 
         expressions, ids, flags = zip(*patterns)
-        db.compile(expressions=expressions, ids=ids, flags=flags)
-        db.dump('patterns.pkl')
+        db.compile(expressions=expressions, ids=ids, flags=flags, overwrite=False)
+        print(db)  # Prints the number of patterns in the database
+        db.dump('patterns.db')
 
     # Find patterns in text
     def match_handler(id, from_, to, flags, context):
