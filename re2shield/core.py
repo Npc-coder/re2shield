@@ -18,23 +18,30 @@ class Re2ShieldDatabase:
 class Re2Shield:
     def __init__(self):
         self.db = None
-        self.id_counter = 0
 
     def __str__(self):
         if self.db is not None:
-            return f"Database with {self.db.count_patterns()} patterns."
+            return f"Re2Shield Database with {self.db.count_patterns()} patterns."
         else:
-            return "Database is not compiled."
+            return "Re2Shield Database is not compiled."
 
-    def compile(self, expressions, overwrite=False):
-        if overwrite or self.db is None:
-            self.db = Re2ShieldDatabase({}, {})
-            self.id_counter = 0
+    def compile(self, expressions, ids, overwrite=False):
+        if len(expressions) != len(ids):
+            raise ValueError("All parameters should have the same length")
 
-        for expr in expressions:
-            self.db.re2_patterns[self.id_counter] = re2.compile(expr)
-            self.db.raw_patterns[self.id_counter] = expr
-            self.id_counter += 1
+        re2_patterns = {}
+        raw_patterns = {}
+        if not overwrite and self.db is not None:
+            re2_patterns = self.db.re2_patterns.copy()
+            raw_patterns = self.db.raw_patterns.copy()
+
+        for id, expr in zip(ids, expressions):
+            if id in re2_patterns:
+                raise ValueError(f"ID {id} already exists in the database. To overwrite, set overwrite=True.")
+            re2_patterns[id] = re2.compile(expr)
+            raw_patterns[id] = expr
+
+        self.db = Re2ShieldDatabase(re2_patterns, raw_patterns)
 
     def dump(self, file_path):
         if self.db is not None:
@@ -57,5 +64,4 @@ def load(file_path):
         re2_patterns = {id: re2.compile(expr) for id, expr in raw_patterns.items()}
     re2_shield = Re2Shield()
     re2_shield.db = Re2ShieldDatabase(re2_patterns, raw_patterns)
-    re2_shield.id_counter = max(raw_patterns.keys()) + 1
     return re2_shield

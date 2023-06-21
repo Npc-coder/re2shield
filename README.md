@@ -32,11 +32,9 @@ pip install .
 ```
 
 ## Updates
-### Version 0.1.4
-- Simplified the interface for compiling patterns. Now the compile method only requires a list of regular expressions. It automatically assigns a unique ID to each pattern, starting from 0 and incrementing for each new pattern.
-- Removed the flags parameter from the compile method, as it was not necessary for the functionality of the library.
-Improved the load function to correctly set the id_counter for the loaded Re2Shield object, ensuring that new patterns compiled after loading will have unique IDs.
-- Removed the unnecessary ID duplication check in the compile method, as the new automatic ID assignment guarantees uniqueness.
+### Version 0.1.5
+- Reverted the change that automatically assigned IDs to patterns. Now the compile method requires both a list of regular expressions and a list of corresponding IDs, allowing users to specify the ID for each pattern.
+- Improved the compile method to check for ID duplication among both new and existing patterns in the database. If a duplicate ID is found and overwrite is False, a ValueError is raised.
 
 Please refer to the [Usage](#usage) section for examples of how to use these new features.
 
@@ -57,12 +55,13 @@ if __name__ == "__main__":
     except FileNotFoundError:
         # If pattern file doesn't exist, compile the patterns
         patterns = [
-            r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
-            r'\b\d{3}[-.\s]??\d{3}[-.\s]??\d{4}\b',
-            r'\d+'
+            (r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', 1),
+            (r'\b\d{3}[-.\s]??\d{3}[-.\s]??\d{4}\b', 2),
+            (r'\d+', 3)
         ]
 
-        db.compile(expressions=patterns, overwrite=False)
+        expressions, ids = zip(*patterns)
+        db.compile(expressions=expressions, ids=ids, overwrite=False)
         print(db)  # Prints the number of patterns in the database
         db.dump('patterns.pkl')
 
