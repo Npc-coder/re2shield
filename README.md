@@ -32,10 +32,12 @@ pip install .
 ```
 
 ## Updates
-### Version 0.1.3
-- Added the ability to count the number of patterns in the Re2ShieldDatabase. You can now print the Re2Shield object to see the number of compiled patterns.
-- Added an 'overwrite' option to the compile method in Re2Shield. If 'overwrite' is False (default), new patterns are added to the existing ones. If 'overwrite' is True, new patterns replace the existing ones.
-- Enhanced ID duplication check. Now it checks for ID duplication not only among the new patterns but also between the new patterns and the existing ones in the database. If a duplicate ID is found and 'overwrite' is False, a ValueError is raised.
+### Version 0.1.4
+- Simplified the interface for compiling patterns. Now the compile method only requires a list of regular expressions. It automatically assigns a unique ID to each pattern, starting from 0 and incrementing for each new pattern.
+- Removed the flags parameter from the compile method, as it was not necessary for the functionality of the library.
+Improved the load function to correctly set the id_counter for the loaded Re2Shield object, ensuring that new patterns compiled after loading will have unique IDs.
+- Removed the unnecessary ID duplication check in the compile method, as the new automatic ID assignment guarantees uniqueness.
+
 Please refer to the [Usage](#usage) section for examples of how to use these new features.
 
 ## Usage
@@ -55,13 +57,12 @@ if __name__ == "__main__":
     except FileNotFoundError:
         # If pattern file doesn't exist, compile the patterns
         patterns = [
-            (r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', 1, None),
-            (r'\b\d{3}[-.\s]??\d{3}[-.\s]??\d{4}\b', 2, None),
-            (r'\d+', 3, None)
+            r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
+            r'\b\d{3}[-.\s]??\d{3}[-.\s]??\d{4}\b',
+            r'\d+'
         ]
 
-        expressions, ids, flags = zip(*patterns)
-        db.compile(expressions=expressions, ids=ids, flags=flags, overwrite=False)
+        db.compile(expressions=patterns, overwrite=False)
         print(db)  # Prints the number of patterns in the database
         db.dump('patterns.pkl')
 

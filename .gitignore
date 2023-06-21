@@ -1,0 +1,8 @@
+installed/gitflow-installer.sh
+requirements.txt
+docker-compose.yml
+Dockerfile
+build/*
+re2shield.egg-info/*
+tests/patterns.db
+dist/*

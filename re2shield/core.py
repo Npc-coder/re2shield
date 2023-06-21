@@ -18,31 +18,23 @@ class Re2ShieldDatabase:
 class Re2Shield:
     def __init__(self):
         self.db = None
+        self.id_counter = 0
 
     def __str__(self):
         if self.db is not None:
-            return f"Re2Shield Database with {self.db.count_patterns()} patterns."
+            return f"Database with {self.db.count_patterns()} patterns."
         else:
-            return "Re2Shield Database is not compiled."
+            return "Database is not compiled."
 
-    def compile(self, expressions, ids, flags, overwrite=False):
-        if len(expressions) != len(ids) != len(flags):
-            raise ValueError("All parameters should have the same length")
+    def compile(self, expressions, overwrite=False):
+        if overwrite or self.db is None:
+            self.db = Re2ShieldDatabase({}, {})
+            self.id_counter = 0
 
-        re2_patterns = {}
-        raw_patterns = {}
-        if not overwrite and self.db is not None:
-            re2_patterns = self.db.re2_patterns.copy()
-            raw_patterns = self.db.raw_patterns.copy()
-
-        for id, expr, flag in zip(ids, expressions, flags):
-            if id in re2_patterns:
-                raise ValueError(f"ID {id} already exists in the database. To overwrite, set overwrite=True.")
-            re2_patterns[id] = re2.compile(expr, flag)
-            raw_patterns[id] = (expr, flag)
-
-        self.db = Re2ShieldDatabase(re2_patterns, raw_patterns)
-
+        for expr in expressions:
+            self.db.re2_patterns[self.id_counter] = re2.compile(expr)
+            self.db.raw_patterns[self.id_counter] = expr
+            self.id_counter += 1
 
     def dump(self, file_path):
         if self.db is not None:
@@ -62,7 +54,8 @@ Database = Re2Shield
 def load(file_path):
     with open(file_path, 'rb') as f:
         raw_patterns = pickle.load(f)
-        re2_patterns = {id: re2.compile(expr, flag) for id, (expr, flag) in raw_patterns.items()}
+        re2_patterns = {id: re2.compile(expr) for id, expr in raw_patterns.items()}
     re2_shield = Re2Shield()
     re2_shield.db = Re2ShieldDatabase(re2_patterns, raw_patterns)
+    re2_shield.id_counter = max(raw_patterns.keys()) + 1
     return re2_shield
