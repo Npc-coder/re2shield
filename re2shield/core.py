@@ -18,12 +18,14 @@ class Re2ShieldDatabase:
 class Re2Shield:
     def __init__(self):
         self.db = None
+        self.version = None
 
     def __str__(self):
-        if self.db is not None:
-            return f"Re2Shield Database with {self.db.count_patterns()} patterns."
-        else:
-            return "Re2Shield Database is not compiled."
+        message = {
+            "version": self.version,
+            "pattern_counts": self.db.count_patterns() if self.db is not None else 0
+        }
+        return str(message)
 
     def compile(self, expressions, ids, overwrite=False):
         if len(expressions) != len(ids):

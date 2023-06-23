@@ -2,7 +2,7 @@ import re2shield
 
 if __name__ == "__main__":
     db = re2shield.Database()
-
+    print(db)
     # Load patterns from file
     try:
         db = re2shield.load('patterns.db')
@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
         expressions, ids = zip(*patterns)
         db.compile(expressions=expressions, ids=ids, overwrite=False)
-        print(db)  # Prints the number of patterns in the database
+        print(db)  # Prints the number of patterns in the database and version
         db.dump('patterns.db')
 
     # Find patterns in text

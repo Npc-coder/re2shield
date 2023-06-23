@@ -32,9 +32,8 @@ pip install .
 ```
 
 ## Updates
-### Version 0.1.5
-- Reverted the change that automatically assigned IDs to patterns. Now the compile method requires both a list of regular expressions and a list of corresponding IDs, allowing users to specify the ID for each pattern.
-- Improved the compile method to check for ID duplication among both new and existing patterns in the database. If a duplicate ID is found and overwrite is False, a ValueError is raised.
+### Version 0.1.6
+- The __str__ method has been updated. Now, it returns a string that includes the version of the Re2Shield object and the number of patterns in the database. If the database has not been compiled, the number of patterns is displayed as 0. With this change, it is guaranteed that a string is always returned when printing the Re2Shield object as a string.
 
 Please refer to the [Usage](#usage) section for examples of how to use these new features.
 
@@ -47,10 +46,10 @@ import re2shield
 
 if __name__ == "__main__":
     db = re2shield.Database()
-
+    print(db)
     # Load patterns from file
     try:
-        db = re2shield.load('patterns.pkl')
+        db = re2shield.load('patterns.db')
         print(db)  # Prints the number of patterns in the database
     except FileNotFoundError:
         # If pattern file doesn't exist, compile the patterns
@@ -62,8 +61,8 @@ if __name__ == "__main__":
 
         expressions, ids = zip(*patterns)
         db.compile(expressions=expressions, ids=ids, overwrite=False)
-        print(db)  # Prints the number of patterns in the database
-        db.dump('patterns.pkl')
+        print(db)  # Prints the number of patterns in the database and version
+        db.dump('patterns.db')
 
     # Find patterns in text
     def match_handler(id, from_, to, flags, context):
