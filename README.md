@@ -32,8 +32,9 @@ pip install .
 ```
 
 ## Updates
-### Version 0.1.6
-- The __str__ method has been updated. Now, it returns a string that includes the version of the Re2Shield object and the number of patterns in the database. If the database has not been compiled, the number of patterns is displayed as 0. With this change, it is guaranteed that a string is always returned when printing the Re2Shield object as a string.
+### Version 0.1.7
+- Bug Fix
+    - Fixed a bug where the version and pattern count were not being displayed correctly.
 
 Please refer to the [Usage](#usage) section for examples of how to use these new features.
 

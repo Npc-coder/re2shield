@@ -16,14 +16,16 @@ class Re2ShieldDatabase:
         return len(self.re2_patterns)
 
 class Re2Shield:
-    def __init__(self):
+    def __init__(self, version=None, pattern_counts=0):
         self.db = None
-        self.version = None
+        self.version = version
+        self.pattern_counts = pattern_counts
 
     def __str__(self):
+        self.pattern_counts = self.db.count_patterns() if self.db is not None else 0
         message = {
             "version": self.version,
-            "pattern_counts": self.db.count_patterns() if self.db is not None else 0
+            "pattern_counts": self.pattern_counts
         }
         return str(message)
 
@@ -48,7 +50,7 @@ class Re2Shield:
     def dump(self, file_path):
         if self.db is not None:
             with open(file_path, 'wb') as f:
-                pickle.dump(self.db.raw_patterns, f)
+                pickle.dump((self.version, self.db.raw_patterns), f)
         else:
             raise ValueError("No compiled database found. Please compile patterns first.")
 
@@ -62,8 +64,8 @@ Database = Re2Shield
 
 def load(file_path):
     with open(file_path, 'rb') as f:
-        raw_patterns = pickle.load(f)
+        version, raw_patterns = pickle.load(f)
         re2_patterns = {id: re2.compile(expr) for id, expr in raw_patterns.items()}
-    re2_shield = Re2Shield()
+    re2_shield = Re2Shield(version=version)
     re2_shield.db = Re2ShieldDatabase(re2_patterns, raw_patterns)
     return re2_shield

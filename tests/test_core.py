@@ -1,7 +1,7 @@
 import re2shield
 
 if __name__ == "__main__":
-    db = re2shield.Database()
+    db = re2shield.Database(version='1.0.0')
     print(db)
     # Load patterns from file
     try:
@@ -25,3 +25,5 @@ if __name__ == "__main__":
         print(f"Match found for pattern {id} from {from_} to {to}: {context}")
 
     db.scan('test@ex12ample12.com', match_handler)
+    print(db.version)
+    print(db.pattern_counts)
