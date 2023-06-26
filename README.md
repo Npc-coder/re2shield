@@ -32,9 +32,12 @@ pip install .
 ```
 
 ## Updates
-### Version 0.1.7
+### Version 0.2.1
 - Bug Fix
-    - Fixed a bug where the version and pattern count were not being displayed correctly.
+    - Removed flag
+- Added type and date fields to the Re2Shield class for additional metadata.
+- Updated dump and load functions to include the new type and date fields when saving and loading the compiled patterns.
+- Enhanced the __str__ method of the Re2Shield class to include the new fields in the output.
 
 Please refer to the [Usage](#usage) section for examples of how to use these new features.
 
@@ -46,12 +49,10 @@ Here is a simple example demonstrating how to use re2shield:
 import re2shield
 
 if __name__ == "__main__":
-    db = re2shield.Database()
-    print(db)
+    db = re2shield.Database(version='1.0.0')
     # Load patterns from file
     try:
         db = re2shield.load('patterns.db')
-        print(db)  # Prints the number of patterns in the database
     except FileNotFoundError:
         # If pattern file doesn't exist, compile the patterns
         patterns = [
@@ -62,11 +63,10 @@ if __name__ == "__main__":
 
         expressions, ids = zip(*patterns)
         db.compile(expressions=expressions, ids=ids, overwrite=False)
-        print(db)  # Prints the number of patterns in the database and version
         db.dump('patterns.db')
 
     # Find patterns in text
-    def match_handler(id, from_, to, flags, context):
+    def match_handler(id, from_, to, context):
         print(f"Match found for pattern {id} from {from_} to {to}: {context}")
 
     db.scan('test@ex12ample12.com', match_handler)
